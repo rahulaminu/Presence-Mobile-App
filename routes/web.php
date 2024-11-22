@@ -18,5 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('auth.login');
 });
-Route::get('/dashboard', [DashboardController::class,'index']);
 Route::post('/login', [AuthC::class, 'login']);
+
+// Terapkan middleware untuk route dashboard
+Route::middleware(['check.dashboard'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+});

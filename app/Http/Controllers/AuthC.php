@@ -22,16 +22,16 @@ class AuthC extends Controller
         // Memeriksa apakah siswa ditemukan dan password cocok
         if ($siswa) {
             if (Hash::check($request->password, $siswa->password)) {
+                // Set session siswa_id jika login berhasil
+                $request->session()->put('siswa_id', $siswa->id);
                 return redirect('/dashboard');
             } else {
-                // Jika password tidak cocok
                 return back()->withErrors([
                     'password' => 'Password salah.',
                 ]);
             }
         }
 
-        // Jika gagal, kembali ke halaman login dengan pesan error
         return back()->withErrors([
             'nis' => 'NIS atau password salah.',
         ]);
