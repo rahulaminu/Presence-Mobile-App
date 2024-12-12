@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +26,9 @@ Route::post('/logout', [AuthC::class, 'logout']);
 // Terapkan middleware untuk route dashboard
 Route::middleware(['check.dashboard'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+//Presensi
+Route :: get('/presensi/create',[PresensiController::class,'create']);
 });
+
+

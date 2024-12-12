@@ -28,6 +28,7 @@
     </div>
     <!-- * loader -->
 
+    @yield('header')
 
 
     <!-- App Capsule -->
