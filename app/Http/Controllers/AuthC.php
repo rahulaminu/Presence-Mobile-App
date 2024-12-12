@@ -4,32 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthC extends Controller
 {
     public function login(Request $request)
     {
-        // Validasi input
         $request->validate([
             'nis' => 'required',
             'password' => 'required',
         ]);
 
-        // Mencari siswa berdasarkan NIS
-        $siswa = Siswa::where('nis', $request->nis)->first();
+        $credentials = [
+            'nis' => $request->nis,
+            'password' => $request->password,
+        ];
 
-        // Memeriksa apakah siswa ditemukan dan password cocok
-        if ($siswa) {
-            if (Hash::check($request->password, $siswa->password)) {
-                // Set session siswa_id jika login berhasil
-                $request->session()->put('siswa_id', $siswa->id);
-                return redirect('/dashboard');
-            } else {
-                return back()->withErrors([
-                    'password' => 'Password salah.',
-                ]);
-            }
+        if (Auth::guard('siswa')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
@@ -37,26 +31,11 @@ class AuthC extends Controller
         ]);
     }
 
-    public function register(Request $request)
-    {
-        $request->validate([
-            'nis' => 'required|unique:siswa',
-            'nama' => 'required',
-            'password' => 'required',
-        ]);
-
-        Siswa::create([
-            'nis' => $request->nis,
-            'nama' => $request->nama,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return redirect('/')->with('success', 'Akun berhasil dibuat.');
-    }
-
     public function logout(Request $request)
     {
-        $request->session()->flush();
+        Auth::guard('siswa')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect('/');
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,17 +19,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('auth.login');
-});
+})->name('login');
 Route::post('/login', [AuthC::class, 'login']);
-Route::post('/register', [AuthC::class, 'register']);
-Route::post('/logout', [AuthC::class, 'logout']);
+Route::post('/logout', [AuthC::class, 'logout'])->name('logout');
 
 // Terapkan middleware untuk route dashboard
-Route::middleware(['check.dashboard'])->group(function () {
+Route::middleware(['auth:siswa'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
-//Presensi
-Route :: get('/presensi/create',[PresensiController::class,'create']);
+    //Presensi
+    Route::get('/presensi/create', [PresensiController::class, 'create']);
+    Route::post('/presensi/store', [PresensiController::class, 'store']);
 });
 
 
