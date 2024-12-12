@@ -36,4 +36,27 @@ class AuthC extends Controller
             'nis' => 'NIS atau password salah.',
         ]);
     }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'nis' => 'required|unique:siswa',
+            'nama' => 'required',
+            'password' => 'required',
+        ]);
+
+        Siswa::create([
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect('/')->with('success', 'Akun berhasil dibuat.');
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->flush();
+        return redirect('/');
+    }
 }

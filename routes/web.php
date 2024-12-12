@@ -19,6 +19,8 @@ Route::get('/', function () {
     return view('auth.login');
 });
 Route::post('/login', [AuthC::class, 'login']);
+Route::post('/register', [AuthC::class, 'register']);
+Route::post('/logout', [AuthC::class, 'logout']);
 
 // Terapkan middleware untuk route dashboard
 Route::middleware(['check.dashboard'])->group(function () {
