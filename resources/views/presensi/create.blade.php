@@ -39,10 +39,23 @@
     </div>
     <div class="row">
         <div class="col">
-            <button id="tagabsen" class="btn btn-primary btn-block">
-                <ion-icon name="camera-outline"></ion-icon>
-                Masuk
-            </button>
+            @if ($cek > 0)
+                @if ($sudahPulang)
+                    <button class="btn btn-secondary btn-block" disabled>
+                        Sudah Presensi Pulang
+                    </button>
+                @else
+                    <button id="tagabsen" class="btn btn-danger btn-block">
+                        <ion-icon name="camera-outline"></ion-icon>
+                        Pulang
+                    </button>
+                @endif
+            @else
+                <button id="tagabsen" class="btn btn-primary btn-block">
+                    <ion-icon name="camera-outline"></ion-icon>
+                    Masuk
+                </button>
+            @endif
         </div>
     </div>
     <div class="row mt-2">
@@ -102,7 +115,23 @@
                 },
                 cache: false,
                 success: function(respond) {
-                    alert(respond);
+                    if (respond.error) {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: respond.error,
+                            confirmButtonText: 'OK'
+                        })
+                        setTimeout("location.href='/dashboard'", 3000);
+                    } else {
+                        swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: respond.message,
+                            confirmButtonText: 'OK'
+                        });
+                        setTimeout("location.href='/dashboard'", 3000);
+                    }
                 }
             })
         })

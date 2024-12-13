@@ -19,9 +19,10 @@ return new class extends Migration
             $table->date('tgl_presensi');
             $table->time('jam_in');
             $table->time('jam_out');
-            $table->time('foto_in');
-            $table->time('foto_out');
-            $table->string('location');
+            $table->string('foto_in');
+            $table->string('foto_out');
+            $table->string('lokasi_in');
+            $table->string('lokasi_out');
         });
     }
 
