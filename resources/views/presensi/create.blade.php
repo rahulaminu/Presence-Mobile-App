@@ -1,5 +1,8 @@
 @extends ('layout.presensi')
 @section('header')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <!-- App Header -->
     <div class="appHeader bg-primary text-light">
         <div class="left">
@@ -10,7 +13,6 @@
         <div class="pageTitle">E-Presensi</div>
         <div class="right"></div>
     </div>
-    <!-- * App Header -->
     <style>
         .camera,
         .camera video {
@@ -19,16 +21,12 @@
             margin: auto;
             height: auto !important;
             border-radius: 15px;
-
-
         }
 
         #map {
-            height: 200px;
+            height: 320px;
         }
     </style>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 @endsection
 @section('content')
     <div class="row" style="margin-top : 70px;">
@@ -82,28 +80,101 @@
 
         function successCallback(position) {
             lokasi.value = position.coords.latitude + "," + position.coords.longitude;
-            var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 16);
+            
+            // Koordinat lokasi yang diizinkan (ganti dengan koordinat sekolah)
+            const kantorLocation = {
+                lat: -3.439873,  // Ganti dengan latitude sekolah
+                lng: 114.842238  // Ganti dengan longitude sekolah
+            };
+            
+            // Inisialisasi map dengan posisi user
+            var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 17);
+            
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
+                maxZoom: 17,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
-            var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
-            var circle = L.circle([position.coords.latitude, position.coords.longitude], { //Mengatur Coor untuk Radius
+
+            // Marker untuk posisi user
+            var userMarker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+            userMarker.bindPopup("Lokasi Anda").openPopup();
+
+            // Marker untuk lokasi kantor/sekolah
+            var kantorMarker = L.marker([kantorLocation.lat, kantorLocation.lng]).addTo(map);
+            kantorMarker.bindPopup("Lokasi Kantor").openPopup();
+
+            // Radius yang diizinkan
+            var circle = L.circle([kantorLocation.lat, kantorLocation.lng], {
                 color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.5,
-                radius: 500 //Mengatur Jarak Radius (Satuanya Meter)
+                radius: 100 // Radius dalam meter
             }).addTo(map);
         }
 
         function errorCallback() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lokasi tidak ditemukan',
+                text: 'Pastikan GPS Anda aktif',
+                confirmButtonText: 'OK'
+            });
+        }
 
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius bumi dalam km
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const d = R * c;
+            return d * 1000; // Konversi ke meter
+        }
+
+        function toRad(value) {
+            return value * Math.PI / 180;
         }
 
         $('#tagabsen').click(function(e) {
+            e.preventDefault();
+            
+            // Ambil koordinat user
+            var userCoords = $('#lokasi').val().split(',');
+            var userLat = parseFloat(userCoords[0]);
+            var userLng = parseFloat(userCoords[1]);
+            
+            // Koordinat kantor/sekolah
+            const kantorLocation = {
+                lat: -3.439873,  // Ganti dengan latitude sekolah
+                lng: 114.842238  // Ganti dengan longitude sekolah
+            };
+            
+            // Hitung jarak
+            var distance = calculateDistance(
+                userLat, 
+                userLng,
+                kantorLocation.lat,
+                kantorLocation.lng
+            );
+            
+            // Validasi jarak (radius 100 meter)
+            if (distance > 100) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Di Luar Area',
+                    text: 'Anda berada di luar area yang diizinkan. Jarak Anda ' + Math.round(distance) + ' meter dari lokasi',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Jika dalam radius yang diizinkan, lanjutkan proses presensi
             Webcam.snap(function(uri) {
-                image = uri
+                image = uri;
             });
+            
             var lokasi = $('#lokasi').val();
             $.ajax({
                 type: 'POST',
@@ -116,24 +187,23 @@
                 cache: false,
                 success: function(respond) {
                     if (respond.error) {
-                        swal.fire({
+                        Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
                             text: respond.error,
                             confirmButtonText: 'OK'
-                        })
-                        setTimeout("location.href='/dashboard'", 3000);
+                        });
                     } else {
-                        swal.fire({
+                        Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: respond.message,
                             confirmButtonText: 'OK'
                         });
-                        setTimeout("location.href='/dashboard'", 3000);
                     }
+                    setTimeout("location.href='/dashboard'", 3000);
                 }
-            })
-        })
+            });
+        });
     </script>
 @endpush

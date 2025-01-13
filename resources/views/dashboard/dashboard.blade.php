@@ -6,8 +6,8 @@
                 <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded">
             </div>
             <div id="user-info">
-                <h2 id="user-name">Adam Abdi Al A'la</h2>
-                <span id="user-role">Head of IT</span>
+                <h2 id="user-name">Adam Abdi Al A'la</h2> <!-- nama siswa -->
+                <span id="user-role">Head of IT</span> <!-- kelas -->
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                             <span class="text-center">Histori</span>
                         </div>
                     </div>
-                    <div class="item-menu text-center">
+                    {{-- <div class="item-menu text-center">
                         <div class="menu-icon">
                             <a href="" class="orange" style="font-size: 40px;">
                                 <ion-icon name="location"></ion-icon>
@@ -55,12 +55,13 @@
                         <div class="menu-name">
                             Lokasi
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="item-menu text-center">
                         <div class="menu-icon">
                             <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                 @csrf
-                                <button type="submit" class="danger" style="font-size: 40px; background: none; border: none;">
+                                <button type="submit" class="danger"
+                                    style="font-size: 40px; background: none; border: none;">
                                     <ion-icon name="log-out"></ion-icon>
                                 </button>
                             </form>
@@ -77,104 +78,108 @@
         <div class="todaypresence">
             <div class="row">
                 <div class="col-6">
-                    <div class="card gradasigreen">
+                    <a href="/presensi/create" class="item">
+                        <div class="card gradasigreen">
+                            <div class="card-body">
+                                <div class="presencecontent">
+                                    <div class="iconpresence">
+                                        <ion-icon name="camera"></ion-icon>
+                                    </div>
+                                    <div class="presencedetail">
+                                        <h4 class="presencetitle">Masuk</h4>
+                                        <span>07:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="/presensi/create" class="item">
+                        <div class="card gradasired">
+                            <div class="card-body">
+                                <div class="presencecontent">
+                                    <div class="iconpresence">
+                                        <ion-icon name="camera"></ion-icon>
+                                    </div>
+                                    <div class="presencedetail">
+                                        <h4 class="presencetitle">Pulang</h4>
+                                        <span>15:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="rekappresence">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
                         <div class="card-body">
                             <div class="presencecontent">
-                                <div class="iconpresence">
-                                    <ion-icon name="camera"></ion-icon>
+                                <div class="iconpresence primary">
+                                    <ion-icon name="log-in"></ion-icon>
                                 </div>
                                 <div class="presencedetail">
-                                    <h4 class="presencetitle">Masuk</h4>
-                                    <span>07:00</span>
+                                    <h4 class="rekappresencetitle">Hadir</h4>
+                                    <span class="rekappresencedetail">0 Hari</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-6">
-                    <div class="card gradasired">
+                    <div class="card">
                         <div class="card-body">
                             <div class="presencecontent">
-                                <div class="iconpresence">
-                                    <ion-icon name="camera"></ion-icon>
+                                <div class="iconpresence green">
+                                    <ion-icon name="document-text"></ion-icon>
                                 </div>
                                 <div class="presencedetail">
-                                    <h4 class="presencetitle">Pulang</h4>
-                                    <span>12:00</span>
+                                    <h4 class="rekappresencetitle">Izin</h4>
+                                    <span class="rekappresencedetail">0 Hari</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="rekappresence">
-            <div id="chartdiv"></div>
-            <!-- <div class="row">
-                                <div class="col-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="presencecontent">
-                                                <div class="iconpresence primary">
-                                                    <ion-icon name="log-in"></ion-icon>
-                                                </div>
-                                                <div class="presencedetail">
-                                                    <h4 class="rekappresencetitle">Hadir</h4>
-                                                    <span class="rekappresencedetail">0 Hari</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+            <div class="row mt-1">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="presencecontent">
+                                <div class="iconpresence warning">
+                                    <ion-icon name="sad"></ion-icon>
                                 </div>
-                                <div class="col-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="presencecontent">
-                                                <div class="iconpresence green">
-                                                    <ion-icon name="document-text"></ion-icon>
-                                                </div>
-                                                <div class="presencedetail">
-                                                    <h4 class="rekappresencetitle">Izin</h4>
-                                                    <span class="rekappresencedetail">0 Hari</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="presencedetail">
+                                    <h4 class="rekappresencetitle">Sakit</h4>
+                                    <span class="rekappresencedetail">0 Hari</span>
                                 </div>
                             </div>
-                            <div class="row mt-1">
-                                <div class="col-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="presencecontent">
-                                                <div class="iconpresence warning">
-                                                    <ion-icon name="sad"></ion-icon>
-                                                </div>
-                                                <div class="presencedetail">
-                                                    <h4 class="rekappresencetitle">Sakit</h4>
-                                                    <span class="rekappresencedetail">0 Hari</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="presencecontent">
+                                <div class="iconpresence danger">
+                                    <ion-icon name="alarm"></ion-icon>
                                 </div>
-                                <div class="col-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="presencecontent">
-                                                <div class="iconpresence danger">
-                                                    <ion-icon name="alarm"></ion-icon>
-                                                </div>
-                                                <div class="presencedetail">
-                                                    <h4 class="rekappresencetitle">Terlambat</h4>
-                                                    <span class="rekappresencedetail">0 Hari</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="presencedetail">
+                                    <h4 class="rekappresencetitle">Terlambat</h4>
+                                    <span class="rekappresencedetail">0 Hari</span>
                                 </div>
-                            </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="chartdiv"></div>
         </div>
         <div class="presencetab mt-2">
             <div class="tab-pane fade show active" id="pilled" role="tabpanel">
